@@ -13,8 +13,8 @@ else
 fi
 
 #echo $1
+echo "usuario github:	vendul0g"
+echo "token github: 	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"
 git add -A
 git commit -m "$1"
 git push -u origin main
-echo "usuario github:	vendul0g"
-echo "token github: 	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"
