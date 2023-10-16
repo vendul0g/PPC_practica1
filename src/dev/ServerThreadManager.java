@@ -31,7 +31,7 @@ public class ServerThreadManager extends Thread{
 	
 	//Constructor
 	public ServerThreadManager(Socket s) {
-		System.out.println("\t Conectado "+ s.getInetAddress()+":"+s.getPort());
+		System.out.println("\tConectado "+ s.getInetAddress()+":"+s.getPort());
 		this.s = s;
 		
 		//Establecemos un timeout
@@ -58,7 +58,6 @@ public class ServerThreadManager extends Thread{
 			//Leemos la petición
 			if( (message = getMessage()).equals(""))
 				break;
-	
 			//Procesamos la petición para crear una respuesta		
 			answer = proccesMessage(message);
 			
@@ -145,14 +144,19 @@ public class ServerThreadManager extends Thread{
 		
 		if(lastResource.equals("/")) lastResource+="index.html";
 		
+		/**
+		 * Ejemplo de línea:
+		 * Cookie: last_resource=/index.html; history=JTdCJTJGaW5kZXguaHRtbCUzRDElN0Q=
+		 */
+		
 		//Recorremos las cabeceras buscando las cookies del servidor
 		for(int i=1; i<lines.length && !isLastResource && !isHistory; i++) {
 			if(lines[i].split(":")[0].equals("Cookie")) {
-				aux = lines[i].split(":")[1].split(";");
+				aux = lines[i].split(": ")[1].split("; ");// aux = [last_resource=/index.html,history=JTdCJTJGaW5kZXguaHRtbCUzRDElN0Q=]
 				for(String s : aux) {
-					if(s.split("=")[0].equals(" last_resource")) {
+					if(s.split("=")[0].equals("last_resource")) {
 						isLastResource = true;
-					} else if (s.split("=")[0].equals(" history")) {
+					} else if (s.split("=")[0].equals("history")) {
 						isHistory = true; 
 						historyString = fromBase64(s.split("=")[1]);
 						historyMap = new HistoryMap(historyString);
@@ -221,6 +225,8 @@ public class ServerThreadManager extends Thread{
 	        urlDecoded = URLDecoder.decode(new String(decodedBytes, StandardCharsets.UTF_8.toString()), StandardCharsets.UTF_8.toString());
 	    } catch (UnsupportedEncodingException e) {
 	        System.err.println("Fallo al decodificar (URLDecoding)");
+	    } catch(IllegalArgumentException e) {
+	    	System.err.println("Fallo al decodificar (URLDecoding)");
 	    }
 	    return urlDecoded;
 	}

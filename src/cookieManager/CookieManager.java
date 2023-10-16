@@ -25,7 +25,7 @@ public class CookieManager {
 		}
 		this.formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		this.cookieEntry = new TreeMap<>();
-		parseMap();
+		parseCookieFileToMap();
 	}
 	
 	//Getters & setters
@@ -72,7 +72,7 @@ public class CookieManager {
 		}
 	}
 	
-	private void parseMap() {
+	private void parseCookieFileToMap() {
 		BufferedReader reader = null;
 		String line;
 		if(this.f.length() > 0) {
@@ -81,7 +81,7 @@ public class CookieManager {
 	
 				//Comenzamos con la lectura del fichero
 				while( (line= reader.readLine()) != null) {
-					parseCookie(line);
+					parseFileCookie(line);
 				}
 				
 				//Cerramos el lector
@@ -93,7 +93,7 @@ public class CookieManager {
 		}
 	}
 	
-	public void parseCookie(String line) {
+	public void parseFileCookie(String line) {
 		Cookie c;
 		LocalDateTime t;
 		
@@ -106,9 +106,10 @@ public class CookieManager {
 		}
 		
 		//Parseamos la cookie
-		c = Cookie.parseCookie(line);
+		c = Cookie.parseCookie(line.substring(0, line.indexOf(",")));
 		//Si se ha cumplido la fecha no la añadimos
-		if(c != null && LocalDateTime.now().isAfter(t.plusSeconds(c.getMaxAge()))) {
+		boolean time = LocalDateTime.now().isAfter(t.plusSeconds(c.getMaxAge()));
+		if(c != null && time) {
 			return;
 		}
 		

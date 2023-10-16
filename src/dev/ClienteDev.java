@@ -60,6 +60,8 @@ public class ClienteDev {
         	Set<Cookie> cookies = cm.getCookies();
         	m.addCookies(cookies);
         	
+        	printRequest(m.getMessage());
+        	
         	//Envío de petición HTTP
         	sendMessage(m.getMessage());
         	
@@ -96,6 +98,12 @@ public class ClienteDev {
 		closeScanner();
 		//Cerramos el socket
 		closeSocket();
+	}
+	
+	private void printRequest (String m) {
+		System.out.println("-------------------Request----------------------\n"
+				+ m+"\n"
+				+ "-------------------------------------------------------\n\n");
 	}
 	
 	private void printAnswer(String cabeceras, String cuerpo) {

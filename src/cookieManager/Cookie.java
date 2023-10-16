@@ -51,6 +51,10 @@ public class Cookie implements Comparable<Cookie>{
 	}
 	
 	public static Cookie parseCookie(String line) {
+		/**
+		 * Ejemplo de línea
+		 * last_resource=/index.htm; max-age=3600
+		 */
 		Cookie c = new Cookie();
 		String aux;
 		int iAux;
@@ -60,7 +64,7 @@ public class Cookie implements Comparable<Cookie>{
 		
 		//Cogemos el valor de la cookie
 		aux = line.split("=", 2)[1];
-			c.setValor(aux.substring(0, aux.indexOf(";")-1));
+		c.setValor(aux.substring(0, aux.indexOf(";")));
 
 		//Cogemos el maxage de la cookie 
 		iAux = Integer.parseInt(line.split("max-age=")[1]);

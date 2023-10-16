@@ -25,8 +25,13 @@ public class HTTPGetMessage extends HTTPRequestMessage{
 				+"Host: "+this.host+RETCAR
 				+this.USER_AGENT+RETCAR
 				+this.CONNECTION+RETCAR;
-		for(Cookie c : cookies) {
-			m += COOKIE+c.toString()+RETCAR;
+		if(!cookies.isEmpty()) {
+			m += COOKIE;
+			for(Cookie c : cookies) {
+				m += c.getNombre()+"="+c.getValor()+"; ";
+			}
+			m = m.substring(0, m.length()-2);//Recortamos el último '; '
+			m += RETCAR;
 		}
 		m += RETCAR;
 		return m;
