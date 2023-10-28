@@ -1,4 +1,4 @@
-package dev;
+package servidor;
 
 public enum ServerMethod {
 	GET;
