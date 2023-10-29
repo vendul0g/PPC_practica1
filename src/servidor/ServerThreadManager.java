@@ -17,10 +17,11 @@ import resources.HTMLFile;
 
 public class ServerThreadManager extends Thread{
 	//Variables globales
+	private static boolean VERBOSE = true;
 	private static final String LAST_RESOURCE = "last_resource=";
 	private static final String HISTORY = "history=";
 	private static final int BUFSIZE = 1024;
-	public static final int TIMEOUT = 1000*30;
+	public static final int TIMEOUT = 1000*10;
 		
 	//Atributos
 	private Socket s;
@@ -31,9 +32,9 @@ public class ServerThreadManager extends Thread{
 	
 	//Constructor
 	public ServerThreadManager(Socket s) {
-		System.out.println("\tConectado "+ s.getInetAddress()+":"+s.getPort());
-		this.s = s;
+		if(VERBOSE)	System.out.println("\tConectado "+ s.getInetAddress()+":"+s.getPort());
 		
+		this.s = s;
 		//Establecemos un timeout
 		try {
 			this.s.setSoTimeout(TIMEOUT);
@@ -65,7 +66,7 @@ public class ServerThreadManager extends Thread{
 			sendMessage(answer);
 		}
 		
-		System.out.println("\tCerramos conexión\n------------------------------------------");
+		if(VERBOSE) System.out.println("\tCerramos conexión\n------------------------------------------");
 		//Cerramos el socket
 		closeSocket();
 	}
@@ -73,7 +74,7 @@ public class ServerThreadManager extends Thread{
 	private String proccesMessage(String m) {
 		//Comprobamos el formato de la petición
 		if(!checkFormat(m)) {
-			System.out.println("\t\tBad Request");
+			if(VERBOSE) System.out.println("\t\tBad Request");
 			return new HTTPResponse400().getMessage();
 		}
 		
@@ -83,13 +84,13 @@ public class ServerThreadManager extends Thread{
 		
 		//Comprobamos el método
 		if( ServerMethod.isMethod(reqline[0]) == null) {
-			System.out.println("\t\tMethod Not Allowed");
+			if(VERBOSE) System.out.println("\t\tMethod Not Allowed");
 			return new HTTPResponse405().getMessage();
 		}
 		
 		//Comprobamos la version
 		if(!HTTPMessage.isVersion(reqline[2])) {
-			System.out.println("\t\tVersion not supported");
+			if(VERBOSE) System.out.println("\t\tVersion not supported");
 			return new HTTPResponse505().getMessage();
 		}
 		
@@ -99,13 +100,13 @@ public class ServerThreadManager extends Thread{
 		//Comprobar las cookies
 		List<String> cookies = proccesCookies(lines);
 		if(cookies == null) {//Petición incorrecta
-			System.out.println("\t\tBad Request (Cookies)");
+			if(VERBOSE) System.out.println("\t\tBad Request (Cookies)");
 			return new HTTPResponse400().getMessage();
 		}
 		
 		//Comprobamos URL
 		String url = getURL(reqline[1]);
-		System.out.println("\t\tPetición correcta (200) --> "+url);
+		if(VERBOSE) System.out.println("\t\tPetición correcta (200) --> "+url);
 		
 		//Recuperamos el fichero
 		HTMLFile file = new HTMLFile(url, historyMap);
@@ -253,7 +254,7 @@ public class ServerThreadManager extends Thread{
 				try { //Preparamos timeout
 					bytesRead = istream.read(buff);
 				} catch (SocketTimeoutException e) {
-					System.err.println("\t\tTimeout Excedido");
+					if(VERBOSE) System.err.println("\t\tTimeout Excedido");
 					this.isOpen = false;
 					return "";
 				}

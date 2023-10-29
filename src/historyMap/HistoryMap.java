@@ -53,4 +53,20 @@ public class HistoryMap {
 	public Set<String> keySet(){
 		return this.m.keySet();
 	}
+	
+	public String generateHTMLTable() {
+        StringBuilder html = new StringBuilder();
+        html.append("\t<table border='1'>\n");
+        html.append("\t\t<tr><th>Recurso</th><th>Numero de peticiones</th></tr>\n");
+
+        for (Map.Entry<String, Integer> entry : this.m.entrySet()) {
+            html.append("\t\t\t<tr>");
+            html.append("<td> ").append(entry.getKey()).append("</td>");
+            html.append("\t<td> ").append(entry.getValue()).append("</td>");
+            html.append("</tr>\n");
+        }
+
+        html.append("\t</table> \n");
+        return html.toString();
+    }
 }

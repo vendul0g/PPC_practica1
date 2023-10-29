@@ -30,14 +30,8 @@ public class HTMLFile {
 				+ "<html>\n"
 				+ "    <body>\n"
 				+ "        <h1>Fichero solicitado: "+this.url+"</h1>\n"
-				+ "        <h1>Historial:</h1>\n"
-				+ "        <h2>Recurso    |    Numero de accesos</h2>\n";
-		//Añadimos el historial de acceso
-		if(history != null) {
-			for(String s : this.history.keySet()) {
-				f += "        <h2>"+s+"    |    "+history.get(s)+"</h2>\n";
-			}
-		}
+				+ "        <h1>Historial:</h1>\n";
+		f += history.generateHTMLTable();
 		f += "    </body>\n"
 				+ "</html>\n";
 		return f;

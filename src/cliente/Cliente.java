@@ -10,15 +10,13 @@ import java.net.SocketException;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
-
 import cookieManager.*;
 import httpMessages.HTTPGetMessage;
 
 
 public class Cliente {
 	//Variables globales
-	private static final String SERVERNAME = "localhost";
-	private static final int SERVERPORT = 9999;
+	protected static final String SERVERNAME = "serverppc.com";
 	private static final int BUFSIZE = 1024;
 		
 	//Atributos
@@ -28,18 +26,21 @@ public class Cliente {
 	private Scanner scanner;
 	private boolean isOpen;
 	private CookieManager cm;
+	private int port;
 
 	//Cosntructor
-	public Cliente() {
-		try {
-			this.s = new Socket(SERVERNAME, SERVERPORT);
-		}catch (IOException e ) {
-			System.err.println("Error creando el socket del cliente");
-		}
+	public Cliente(int port) {
+		this.port = port;
 		this.isOpen = false;
 		this.cm = new CookieManager();
 	}
 	
+	//Setter
+	protected void setSocket(Socket s) {
+		this.s = s;
+	}
+	
+	//Funcionalidad
 	public void start() {
 		String answer;
 		String url;
@@ -56,10 +57,11 @@ public class Cliente {
         	}
         	
         	//Recuperamos las cookies de sesiones anteriores
-        	HTTPGetMessage m = new HTTPGetMessage(url, SERVERNAME+":"+SERVERPORT);
+        	HTTPGetMessage m = new HTTPGetMessage(url, SERVERNAME+":"+port);
         	Set<Cookie> cookies = cm.getCookies();
         	m.addCookies(cookies);
         	
+        	//MOstramos la petición realizada
         	printRequest(m.getMessage());
         	
         	//Envío de petición HTTP
@@ -70,6 +72,10 @@ public class Cliente {
         	
         	//Procesamos la respuesta
         	if(!answer.equals("")) {
+        		if( answer.split("\\r\\n\\r\\n").length <= 1) {
+        			System.out.println(answer);
+        			continue;
+        		}
         		//Separamos las cabeceras del cuerpo;
         		String cabeceras = answer.split("\\r\\n\\r\\n")[0];
         		String cuerpo = answer.split("\\r\\n\\r\\n", 2)[1];
@@ -191,10 +197,5 @@ public class Cliente {
 	
 	private void closeScanner() {
 		this.scanner.close();
-	}
-	
-	public static void main(String args[]) {
-		Cliente c = new Cliente();
-		c.start();
 	}
 }

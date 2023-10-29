@@ -5,7 +5,7 @@ import java.net.*;
 
 public class HttpServer {
 	//Constantes
-	private static final int HTTP_PORT = 8080;
+	public static final int HTTP_PORT = 8080;
 
 	//Atributos
 	ServerSocket s;
@@ -32,11 +32,12 @@ public class HttpServer {
 			}
 		}
 	}
-		
-	//main
+	
+	//Main
 	public static void main(String[] args) {
-		HttpServer httpServer = new HttpServer(HTTP_PORT);
+        //Servidor HTTP
+        HttpServer httpServer = new HttpServer(HttpServer.HTTP_PORT);
 		httpServer.run();
-	}
+    }
 }
 
